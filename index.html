@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Web Cryptography API Demo</title>
+	<meta name="keywords" content="asymmetric, crypto">
+	<script type="text/javascript" src="base64.js"></script>
+	<script type="text/javascript" src="rsa.js"></script>
+	<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body>
+
+
+<h1>Web Cryptography API Demo</h1>
+<h2>Acknowledgements</h2>
+<p>
+	<a href="https://github.com/diafygi/webcrypto-examples/">
+		diafygi's <i>webcrypto-examples</i> project</a>
+	helped me a lot through all of this.
+</p>
+<h2>Summary</h2>
+<p>
+	This page lets you use 2048-bit RSA-OAEP with 256-bit AES-GCM.
+	When you encrypt a message, an ephemeral AES key is generated (along with a
+	12-byte random Initialization Vector), used to encrypt your message, then
+	"wrapped" using the recipient's <i>Public Key</i>. The recipient will do
+	the reverse transformation: unwrap the key using her <i>Private Key</i>
+	and decrypt the encrypted message.
+</p>
+<h2>Instructions</h2>
+<p><i>Signature is currently not implemented.</i></p>
+<ol>
+	<li><s>Open this page</s> (done).</li>
+	<li>Copy your <i>Public Key</i>.</li>
+	<li>
+		Three possibilities:
+		<ul>
+			<li>
+				Try encrypting/decrypting a message from the same tab
+				<i>(boring)</i>.
+			</li>
+			<li>
+				Paste it in another tab's <i>Recipient Key</i> field
+				<i>(less boring)</i>.
+			</li>
+			<li>
+				E-mail it to a friend who'll send you an encrypted message
+				<i>(social)</i>.
+			</li>
+		</ul>
+	</li>
+</ol>
+<hr>
+
+
+<p><label>Public Key: <input class="key" id="public" readonly=""></label></p>
+<p><label>Secret Key: <input class="key" id="secret" readonly=""></label></p>
+<form id="f" action="#">
+	<p>
+		<label>
+			Recipient Key:
+			<input class="key" id="rcpt" name="rcpt" size="60">
+		</label>
+	</p>
+	<table>
+		<tr>
+			<th>
+				Signature
+				<button type="button" name="v" disabled="">Verify</button>
+			</th>
+			<th>
+				<button type="button" name="s" disabled="">&lt;&lt; Sign</button>
+				Message
+				<button type="button" name="e">Encrypt &gt;&gt;</button>
+			</th>
+			<th>
+				<button type="button" name="d">&lt;&lt; Decrypt</button>
+				Ciphertext
+			</th>
+		</tr>
+		<tr>
+			<td><textarea autocomplete="off" name="signature" readonly=""></textarea></td>
+			<td><textarea autocomplete="off" name="message"></textarea></td>
+			<td><textarea autocomplete="off" name="ciphertext"></textarea></td>
+		</tr>
+	</table>
+</form>
+<script type="text/javascript" src="demo.js"></script>
+
+
+</body>
+</html>

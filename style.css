@@ -1,0 +1,12 @@
+textarea {
+	width: 100%;
+	resize: none;
+}
+
+input.key {
+	width: 80%;
+}
+
+table {
+	width: 100%;
+}
