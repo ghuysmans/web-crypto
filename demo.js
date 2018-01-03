@@ -1,11 +1,5 @@
 "use strict";
 
-function dump(p, dest) {
-	p.then(function (v) {
-		document.getElementById(dest).value = JSON.stringify(v);
-	});
-}
-
 function try_(p) {
 	return p.catch(function (e) {
 		console.error(e);
@@ -14,12 +8,41 @@ function try_(p) {
 
 
 var f = document.getElementById("f");
-//if (f.dir[0].checked)
+var ls = window.localStorage;
 
-generateKeyPair(2048, true, ["wrapKey", "unwrapKey"]).then(function (dest) {
-	dump(exportKey(dest.publicKey), "public");
-	dump(exportKey(dest.publicKey), "rcpt");
-	dump(exportKey(dest.privateKey), "secret");
+var keyPair =
+	ls["public"] ?
+		importKey(JSON.parse(ls["public"]), true, ["wrapKey"]).
+		then(function (pub) {
+			return importKey(JSON.parse(ls["private"]), false, ["unwrapKey"]).
+			then(function (priv) {
+				return Promise.resolve({publicKey: pub, privateKey: priv});
+			});
+		})
+	/* else */ :
+		generateKeyPair(2048, true, ["wrapKey", "unwrapKey"]).
+		then(function (pair) {
+			return exportKey(pair.privateKey).then(function (priv) {
+				ls["private"] = JSON.stringify(priv);
+				return exportKey(pair.publicKey).then(function (pub) {
+					ls["public"] = JSON.stringify(pub);
+					return Promise.resolve(pair);
+				});
+			});
+		});
+
+keyPair.then(function (dest) {
+	exportKey(dest.publicKey).then(function (pub) {
+		let s = JSON.stringify(pub);
+		f.public.value = s;
+		document.getElementById("link").href = "#" + encodeURIComponent(s);
+		let pos = location.href.indexOf("#");
+		f.rcpt.value =
+			pos != -1 ?
+				decodeURIComponent(location.href.substr(pos + 1))
+			/* else */ :
+				s;
+	});
 	f.d.onclick = function () {
 		let message = importMessage(f.ciphertext.value);
 		try_(decrypt(message, dest.privateKey).then(function (arr) {
